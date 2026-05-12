@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Food Memory Game</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: linear-gradient(135deg, #ffecd2, #fcb69f);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.container {
+  background: #ffffff;
+  padding: 25px 30px;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  max-width: 520px;
+  width: 100%;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 28px;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.card {
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(135deg, #43cea2, #185a9d);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  cursor: pointer;
+  color: transparent;
+  user-select: none;
+  transition: transform 0.3s, background 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card.flipped,
+.card.matched {
+  background: #ffffff;
+  color: #333;
+  cursor: default;
+  transform: scale(1);
+}
+
+.card.matched {
+  background: #d4f5d4;
+}
+
+.controls {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+button, select {
+  flex: 1;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button {
+  background: #ff7a18;
+  color: white;
+}
+
+select {
+  background: #f1f1f1;
+}
+
+.win-message {
+  margin-top: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #2e7d32;
+  display: none;
+}
+
+/* LEADERBOARD */
+.leaderboard {
+  display: none;
+  margin-top: 15px;
+  background: #fff7e6;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.leaderboard ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.leaderboard li {
+  background: white;
+  margin: 6px 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>🍔 Food Memory Game 🍕</h1>
+  <p>Match all the same food cards!</p>
+
+  <div class="info">
+    <div id="moves">Moves: 0</div>
+    <div id="timer">Time: 0s</div>
+  </div>
+
+  <div class="game-board" id="gameBoard"></div>
+
+  <div class="controls">
+    <button onclick="resetGame()">Restart</button>
+    <select id="difficulty" onchange="resetGame()">
+      <option value="4">Easy (4x4)</option>
+      <option value="5">Medium (5x4)</option>
+      <option value="6">Hard (6x4)</option>
+    </select>
+  </div>
+
+  <div class="win-message" id="winMessage">🎉 You matched all cards! 🎉</div>
+
+  <button onclick="toggleLeaderboard()">🏆 Leaderboard</button>
+
+  <div class="leaderboard" id="leaderboard">
+    <h2>🏆 Top Players</h2>
+    <ul id="leaderboardList"></ul>
+    <button onclick="toggleLeaderboard()">Close</button>
+  </div>
+</div>
+
+<script>
+const allFoods = ['🍎','🍔','🍕','🍟','🍩','🍓','🍦','🍗','🥨','🌭','🧁','🍪'];
+
+let cards = [];
+let flippedCards = [];
+let moves = 0;
+let matchedCount = 0;
+let timer = 0;
+let timerInterval;
+
+const board = document.getElementById('gameBoard');
+const movesText = document.getElementById('moves');
+const timerText = document.getElementById('timer');
+const winMessage = document.getElementById('winMessage');
+const difficultySelect = document.getElementById('difficulty');
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timer = 0;
+  timerText.textContent = 'Time: 0s';
+  timerInterval = setInterval(() => {
+    timer++;
+    timerText.textContent = `Time: ${timer}s`;
+  }, 1000);
+}
+
+function createBoard() {
+  board.innerHTML = '';
+  winMessage.style.display = 'none';
+  matchedCount = 0;
+  flippedCards = [];
+  moves = 0;
+  movesText.textContent = 'Moves: 0';
+
+  const cols = parseInt(difficultySelect.value);
+  board.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+  const pairCount = (cols * 4) / 2;
+  cards = allFoods.slice(0, pairCount).flatMap(f => [f, f]);
+  shuffle(cards);
+
+  cards.forEach(food => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.textContent = food;
+    card.addEventListener('click', () => flipCard(card));
+    board.appendChild(card);
+  });
+
+  startTimer();
+}
+
+function flipCard(card) {
+  if (card.classList.contains('flipped') ||
+      card.classList.contains('matched') ||
+      flippedCards.length === 2) return;
+
+  card.classList.add('flipped');
+  flippedCards.push(card);
+
+  if (flippedCards.length === 2) {
+    moves++;
+    movesText.textContent = `Moves: ${moves}`;
+    checkMatch();
+  }
+}
+
+function checkMatch() {
+  const [c1, c2] = flippedCards;
+
+  if (c1.textContent === c2.textContent) {
+    c1.classList.add('matched');
+    c2.classList.add('matched');
+    matchedCount += 2;
+    flippedCards = [];
+
+    if (matchedCount === cards.length) {
+      clearInterval(timerInterval);
+      winMessage.style.display = 'block';
+
+      setTimeout(() => {
+        const name = prompt('🏆 You won! Enter your name:') || 'Anonymous';
+        saveScore(name, timer, moves, difficultySelect.value);
+        showLeaderboard();
+      }, 300);
+    }
+  } else {
+    setTimeout(() => {
+      c1.classList.remove('flipped');
+      c2.classList.remove('flipped');
+      flippedCards = [];
+    }, 800);
+  }
+}
+
+/* LEADERBOARD LOGIC */
+function saveScore(name, time, moves, difficulty) {
+  const scores = JSON.parse(localStorage.getItem('leaderboard')) || [];
+  scores.push({ name, time, moves, difficulty });
+
+  scores.sort((a, b) => a.time - b.time || a.moves - b.moves);
+  scores.splice(5);
+
+  localStorage.setItem('leaderboard', JSON.stringify(scores));
+}
+
+function showLeaderboard() {
+  const list = document.getElementById('leaderboardList');
+  const scores = JSON.parse(localStorage.getItem('leaderboard')) || [];
+
+  list.innerHTML = scores.length
+    ? scores.map((s, i) =>
+      `<li>#${i + 1} ${s.name} — ⏱ ${s.time}s | 🎯 ${s.moves} moves (${s.difficulty}x4)</li>`
+    ).join('')
+    : '<li>No scores yet</li>';
+}
+
+function toggleLeaderboard() {
+  const lb = document.getElementById('leaderboard');
+  lb.style.display = lb.style.display === 'block' ? 'none' : 'block';
+  showLeaderboard();
+}
+
+function resetGame() {
+  clearInterval(timerInterval);
+  createBoard();
+}
+
+createBoard();
+</script>
+</body>
+</html>

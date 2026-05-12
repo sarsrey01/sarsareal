@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Charles Rey Portfolio</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+:root{
+  --bg:#0f172a;
+  --card:#111827;
+  --soft:#1e293b;
+  --accent:#7dd3fc;
+  --accent2:#c4b5fd;
+  --text:#f8fafc;
+  --muted:#94a3b8;
+  --border:rgba(255,255,255,0.08);
+
+  --mono:'DM Mono', monospace;
+  --serif:'DM Serif Display', serif;
+  --sans:'Syne', sans-serif;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:
+    radial-gradient(circle at top left, rgba(125,211,252,0.08), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(196,181,253,0.08), transparent 30%),
+    var(--bg);
+
+  color:var(--text);
+  font-family:var(--sans);
+  overflow-x:hidden;
+}
+
+/* NAVIGATION */
+nav{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  padding:1.4rem 3rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:1000;
+  backdrop-filter:blur(12px);
+  background:rgba(15,23,42,0.45);
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.nav-logo{
+  text-decoration:none;
+  color:var(--text);
+  font-family:var(--mono);
+  font-size:0.8rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+}
+
+.nav-links{
+  display:flex;
+  gap:2rem;
+  list-style:none;
+}
+
+.nav-links a{
+  text-decoration:none;
+  color:var(--muted);
+  font-size:0.75rem;
+  font-family:var(--mono);
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  transition:0.3s;
+}
+
+.nav-links a:hover{
+  color:var(--accent);
+}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:0 8%;
+  position:relative;
+}
+
+.hero-bg{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  font-size:clamp(7rem, 20vw, 18rem);
+  font-family:var(--serif);
+  color:rgba(255,255,255,0.03);
+  pointer-events:none;
+  user-select:none;
+}
+
+.hero-sub{
+  color:var(--accent);
+  font-family:var(--mono);
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  margin-bottom:1rem;
+  font-size:0.8rem;
+}
+
+.hero h1{
+  font-size:clamp(3.5rem, 9vw, 8rem);
+  line-height:0.95;
+  font-family:var(--serif);
+}
+
+.hero h1 em{
+  font-style:italic;
+  color:var(--accent2);
+}
+
+.hero-text{
+  margin-top:2rem;
+  max-width:700px;
+  color:var(--muted);
+  line-height:1.9;
+  font-size:1rem;
+}
+
+.hero-buttons{
+  margin-top:2.5rem;
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+}
+
+.btn{
+  padding:1rem 1.5rem;
+  border-radius:14px;
+  text-decoration:none;
+  font-size:0.8rem;
+  font-family:var(--mono);
+  letter-spacing:0.08em;
+  transition:0.3s;
+}
+
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#0f172a;
+  font-weight:700;
+}
+
+.btn-primary:hover{
+  transform:translateY(-3px);
+}
+
+.btn-outline{
+  border:1px solid rgba(255,255,255,0.12);
+  color:var(--text);
+}
+
+.btn-outline:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+}
+
+/* SECTION */
+section{
+  padding:7rem 8%;
+}
+
+.section-label{
+  color:var(--accent);
+  font-family:var(--mono);
+  text-transform:uppercase;
+  letter-spacing:0.2em;
+  font-size:0.7rem;
+  margin-bottom:1rem;
+}
+
+.section-title{
+  font-size:clamp(2.5rem, 6vw, 5rem);
+  font-family:var(--serif);
+  margin-bottom:2rem;
+}
+
+/* ABOUT */
+.about-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4rem;
+  align-items:start;
+}
+
+.about-text{
+  color:var(--muted);
+  line-height:2;
+  font-size:1rem;
+}
+
+.about-text strong{
+  color:var(--text);
+}
+
+.about-stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1rem;
+}
+
+.stat{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:2rem;
+}
+
+.stat h3{
+  font-size:2.5rem;
+  margin-bottom:0.5rem;
+}
+
+.stat p{
+  color:var(--muted);
+  font-size:0.8rem;
+  font-family:var(--mono);
+  letter-spacing:0.08em;
+}
+
+.skills{
+  margin-top:2rem;
+  display:flex;
+  flex-wrap:wrap;
+  gap:0.7rem;
+}
+
+.skill{
+  padding:0.6rem 1rem;
+  border-radius:999px;
+  background:rgba(125,211,252,0.08);
+  color:var(--accent);
+  font-size:0.75rem;
+  font-family:var(--mono);
+}
+
+/* PROJECTS */
+.projects{
+  display:flex;
+  flex-direction:column;
+  gap:2rem;
+}
+
+.project-card{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:2rem;
+  transition:0.35s;
+}
+
+.project-card:hover{
+  transform:translateY(-5px);
+  border-color:rgba(125,211,252,0.3);
+  box-shadow:0 20px 50px rgba(0,0,0,0.25);
+}
+
+.project-top{
+  display:flex;
+  justify-content:space-between;
+  gap:2rem;
+  flex-wrap:wrap;
+  margin-bottom:1.5rem;
+}
+
+.project-title{
+  font-size:1.8rem;
+  margin-bottom:0.7rem;
+}
+
+.project-desc{
+  color:var(--muted);
+  line-height:1.8;
+  max-width:700px;
+}
+
+.tech{
+  display:flex;
+  gap:0.5rem;
+  flex-wrap:wrap;
+}
+
+.tech span{
+  padding:0.5rem 0.9rem;
+  border-radius:999px;
+  background:rgba(125,211,252,0.08);
+  color:var(--accent);
+  font-size:0.7rem;
+  font-family:var(--mono);
+}
+
+.preview-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:1rem;
+}
+
+.preview-grid img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.06);
+  transition:0.3s;
+}
+
+.preview-grid img:hover{
+  transform:scale(1.02);
+}
+
+.single{
+  grid-template-columns:1fr;
+}
+
+.two{
+  grid-template-columns:repeat(2,1fr);
+}
+
+.live-demo{
+  margin-top:1rem;
+}
+
+.live-demo a{
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+  padding:0.9rem 1.4rem;
+  border-radius:14px;
+  text-decoration:none;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#0f172a;
+  font-weight:700;
+  transition:0.3s;
+}
+
+.live-demo a:hover{
+  transform:translateY(-3px);
+}
+
+/* CONTACT */
+.contact{
+  text-align:center;
+}
+
+.contact-title{
+  font-size:clamp(3rem,7vw,6rem);
+  font-family:var(--serif);
+  margin-bottom:1rem;
+}
+
+.contact-sub{
+  color:var(--muted);
+  margin-bottom:2rem;
+}
+
+.contact-links{
+  display:flex;
+  justify-content:center;
+  gap:1rem;
+  flex-wrap:wrap;
+}
+
+.contact-links a{
+  text-decoration:none;
+  color:var(--accent);
+  border:1px solid rgba(125,211,252,0.2);
+  padding:0.9rem 1.2rem;
+  border-radius:12px;
+  transition:0.3s;
+}
+
+.contact-links a:hover{
+  background:rgba(125,211,252,0.08);
+}
+
+/* FOOTER */
+footer{
+  padding:2rem 8%;
+  border-top:1px solid rgba(255,255,255,0.06);
+  text-align:center;
+  color:var(--muted);
+  font-size:0.8rem;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+
+  nav{
+    padding:1.2rem 1.5rem;
+  }
+
+  .nav-links{
+    gap:1rem;
+  }
+
+  .hero{
+    padding:0 1.5rem;
+  }
+
+  section{
+    padding:5rem 1.5rem;
+  }
+
+  .about-grid{
+    grid-template-columns:1fr;
+  }
+
+  .two{
+    grid-template-columns:1fr;
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Charles Rey</a>
+
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+
+  <div class="hero-bg">Portfolio</div>
+
+  <div class="hero-sub">
+    BSCS 3rd Year Student · Aspiring Developer
+  </div>
+
+  <h1>
+    Charles Rey <br>
+    <em>Cabilogan</em>
+  </h1>
+
+  <p class="hero-text">
+    Hi, I’m Charles Rey S. Cabilogan, a BSCS 3rd-year student from the
+    University of Bohol. I’m an aspiring developer passionate about
+    creating user-friendly and innovative systems.
+
+    I enjoy learning new technologies and building projects that improve
+    efficiency and solve real-world problems.
+  </p>
+
+  <div class="hero-buttons">
+    <a href="#projects" class="btn btn-primary">View Projects</a>
+    <a href="#contact" class="btn btn-outline">Contact Me</a>
+  </div>
+
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+
+  <div class="section-label">
+    About Me
+  </div>
+
+  <h2 class="section-title">
+    Building systems with clean design & real purpose.
+  </h2>
+
+  <div class="about-grid">
+
+    <div>
+
+      <p class="about-text">
+        I focus on creating modern and practical systems that are easy to use,
+        visually clean, and efficient. My interests include web development,
+        UI/UX design, system development, and smart technologies.
+
+        <br><br>
+
+        I continuously improve my skills by building projects and exploring
+        new technologies that can solve real-world problems.
+      </p>
+
+      <div class="skills">
+        <div class="skill">HTML</div>
+        <div class="skill">CSS</div>
+        <div class="skill">JavaScript</div>
+        <div class="skill">PHP</div>
+        <div class="skill">MySQL</div>
+        <div class="skill">Bootstrap</div>
+        <div class="skill">Java</div>
+        <div class="skill">Python</div>
+      </div>
+
+    </div>
+
+    <div class="about-stats">
+
+      <div class="stat">
+        <h3>10+</h3>
+        <p>Projects Built</p>
+      </div>
+
+      <div class="stat">
+        <h3>3rd</h3>
+        <p>Year BSCS</p>
+      </div>
+
+      <div class="stat">
+        <h3>2025</h3>
+        <p>Portfolio Version</p>
+      </div>
+
+      <div class="stat">
+        <h3>∞</h3>
+        <p>Continuous Learning</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+
+  <div class="section-label">
+    Projects
+  </div>
+
+  <h2 class="section-title">
+    Selected Projects
+  </h2>
+
+  <div class="projects">
+
+    <!-- Payroll -->
+    <div class="project-card">
+
+      <div class="project-top">
+
+        <div>
+          <h3 class="project-title">Payroll System</h3>
+
+          <p class="project-desc">
+            A payroll management system designed to manage employee records,
+            salary processing, attendance, and payroll computation efficiently.
+          </p>
+        </div>
+
+        <div class="tech">
+          <span>PHP</span>
+          <span>MySQL</span>
+          <span>Bootstrap</span>
+        </div>
+
+      </div>
+
+      <div class="preview-grid single">
+        <img src="payrollsystem.png" alt="Payroll System">
+      </div>
+
+    </div>
+
+    <!-- Cafe -->
+    <div class="project-card">
+
+      <div class="project-top">
+
+        <div>
+          <h3 class="project-title">
+            Charles & Brew Cafe System
+          </h3>
+
+          <p class="project-desc">
+            A modern cafe ordering and management system designed to streamline
+            transactions, inventory monitoring, and customer management.
+          </p>
+        </div>
+
+        <div class="tech">
+          <span>POS</span>
+          <span>PHP</span>
+          <span>MySQL</span>
+        </div>
+
+      </div>
+
+      <div class="preview-grid">
+
+        <img src="elective.png" alt="">
+        <img src="elective2.png" alt="">
+        <img src="elective3.png" alt="">
+        <img src="elective4.png" alt="">
+        <img src="elective5.png" alt="">
+        <img src="elective6.png" alt="">
+        <img src="elective7.png" alt="">
+        <img src="elective8.png" alt="">
+
+      </div>
+
+    </div>
+
+    <!-- Pond Sentinel -->
+    <div class="project-card">
+
+      <div class="project-top">
+
+        <div>
+          <h3 class="project-title">
+            Pond Sentinel: Smart Pest Detection System
+          </h3>
+
+          <p class="project-desc">
+            A smart monitoring and pest detection system designed to help improve
+            aquaculture management through intelligent detection and monitoring.
+          </p>
+        </div>
+
+        <div class="tech">
+          <span>IoT</span>
+          <span>Arduino</span>
+          <span>AI Detection</span>
+        </div>
+
+      </div>
+
+      <div class="preview-grid two">
+        <img src="sars1.jpg" alt="">
+        <img src="sars2.jpg" alt="">
+      </div>
+
+    </div>
+
+    <!-- Food Memory Game -->
+    <div class="project-card">
+
+      <div class="project-top">
+
+        <div>
+          <h3 class="project-title">
+            Food Memory Game
+          </h3>
+
+          <p class="project-desc">
+            A fun and interactive memory game featuring food-themed cards
+            designed to improve memory and concentration through gameplay.
+          </p>
+        </div>
+
+        <div class="tech">
+          <span>JavaScript</span>
+          <span>Game UI</span>
+          <span>Interactive</span>
+        </div>
+
+      </div>
+
+      <div class="live-demo">
+        <a href="#">
+          Live Demo ↗
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+
+  <div class="section-label">
+    Contact
+  </div>
+
+  <h2 class="contact-title">
+    Let's Build Something Great.
+  </h2>
+
+  <p class="contact-sub">
+    Open for collaborations, freelance projects, and internships.
+  </p>
+
+  <div class="contact-links">
+    <a href="mailto:your@email.com">Email</a>
+    <a href="#">GitHub</a>
+    <a href="#">LinkedIn</a>
+    <a href="#">Facebook</a>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+  © 2025 Charles Rey S. Cabilogan · University of Bohol
+</footer>
+
+</body>
+</html>
