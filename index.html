@@ -16,7 +16,26 @@
   box-sizing:border-box;
 }
 
+/* Light/Dark mode variables - default light */
 :root{
+  /* light theme */
+  --bg:#f4f6fa;
+  --card:#ffffff;
+  --soft:#eef2f6;
+  --accent:#2563eb;
+  --accent2:#7c3aed;
+  --text:#0f172a;
+  --muted:#475569;
+  --border:rgba(0,0,0,0.08);
+  --mono:'DM Mono', monospace;
+  --serif:'DM Serif Display', serif;
+  --sans:'Syne', sans-serif;
+  --nav-bg:rgba(244,246,250,0.85);
+  --shadow-sm:0 10px 25px -5px rgba(0,0,0,0.05);
+  --lightbox-bg:rgba(0,0,0,0.92);
+}
+
+body.dark {
   --bg:#0f172a;
   --card:#111827;
   --soft:#1e293b;
@@ -25,9 +44,9 @@
   --text:#f8fafc;
   --muted:#94a3b8;
   --border:rgba(255,255,255,0.08);
-  --mono:'DM Mono', monospace;
-  --serif:'DM Serif Display', serif;
-  --sans:'Syne', sans-serif;
+  --nav-bg:rgba(15,23,42,0.85);
+  --shadow-sm:0 20px 30px -12px rgba(0,0,0,0.4);
+  --lightbox-bg:rgba(0,0,0,0.94);
 }
 
 html{
@@ -35,13 +54,29 @@ html{
 }
 
 body{
-  background:
-    radial-gradient(circle at top left, rgba(125,211,252,0.08), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(196,181,253,0.08), transparent 30%),
-    var(--bg);
-  color:var(--text);
-  font-family:var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
   overflow-x:hidden;
+  transition: background-color 0.25s ease, color 0.2s ease;
+}
+
+/* gradient overlays (dynamic subtle for both themes) */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(circle at top left, rgba(37,99,235,0.05), transparent 40%),
+              radial-gradient(circle at bottom right, rgba(124,58,237,0.05), transparent 50%);
+}
+body.dark::before {
+  background: radial-gradient(circle at top left, rgba(125,211,252,0.08), transparent 35%),
+              radial-gradient(circle at bottom right, rgba(196,181,253,0.08), transparent 45%);
 }
 
 /* NAVIGATION */
@@ -50,22 +85,24 @@ nav{
   top:0;
   left:0;
   width:100%;
-  padding:1.4rem 3rem;
+  padding:1.2rem 3rem;
   display:flex;
   justify-content:space-between;
   align-items:center;
   z-index:1000;
-  backdrop-filter:blur(12px);
-  background:rgba(15,23,42,0.65);
-  border-bottom:1px solid rgba(255,255,255,0.05);
+  backdrop-filter:blur(16px);
+  background: var(--nav-bg);
+  border-bottom:1px solid var(--border);
+  transition: background 0.2s;
 }
 
 .nav-logo{
   text-decoration:none;
-  color:var(--text);
+  color: var(--text);
   font-family:var(--mono);
-  font-size:0.8rem;
+  font-size:0.85rem;
   letter-spacing:0.15em;
+  font-weight:500;
   text-transform:uppercase;
 }
 
@@ -73,11 +110,12 @@ nav{
   display:flex;
   gap:2rem;
   list-style:none;
+  align-items:center;
 }
 
 .nav-links a{
   text-decoration:none;
-  color:var(--muted);
+  color: var(--muted);
   font-size:0.75rem;
   font-family:var(--mono);
   letter-spacing:0.12em;
@@ -87,6 +125,32 @@ nav{
 
 .nav-links a:hover{
   color:var(--accent);
+}
+
+/* Dark mode toggle button */
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.9rem;
+  border-radius: 40px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text);
+  backdrop-filter: blur(4px);
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.theme-toggle:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0f172a;
+}
+.theme-icon {
+  font-size: 1rem;
 }
 
 /* HERO */
@@ -104,11 +168,14 @@ nav{
   top:50%;
   left:50%;
   transform:translate(-50%, -50%);
-  font-size:clamp(7rem, 20vw, 18rem);
+  font-size:clamp(6rem, 18vw, 16rem);
   font-family:var(--serif);
-  color:rgba(255,255,255,0.03);
+  color: rgba(0,0,0,0.03);
   pointer-events:none;
   user-select:none;
+}
+body.dark .hero-bg {
+  color: rgba(255,255,255,0.03);
 }
 
 .hero-sub{
@@ -121,7 +188,7 @@ nav{
 }
 
 .hero h1{
-  font-size:clamp(3.5rem, 9vw, 8rem);
+  font-size:clamp(3rem, 8vw, 7rem);
   line-height:0.95;
   font-family:var(--serif);
 }
@@ -133,9 +200,9 @@ nav{
 
 .hero-text{
   margin-top:2rem;
-  max-width:700px;
+  max-width:650px;
   color:var(--muted);
-  line-height:1.9;
+  line-height:1.8;
   font-size:1rem;
 }
 
@@ -154,6 +221,10 @@ nav{
   font-family:var(--mono);
   letter-spacing:0.08em;
   transition:0.3s;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .btn-primary{
@@ -164,11 +235,13 @@ nav{
 
 .btn-primary:hover{
   transform:translateY(-3px);
+  box-shadow:0 8px 20px rgba(0,0,0,0.15);
 }
 
 .btn-outline{
-  border:1px solid rgba(255,255,255,0.12);
-  color:var(--text);
+  border:1px solid var(--border);
+  color: var(--text);
+  background: transparent;
 }
 
 .btn-outline:hover{
@@ -191,7 +264,7 @@ section{
 }
 
 .section-title{
-  font-size:clamp(2.5rem, 6vw, 5rem);
+  font-size:clamp(2.2rem, 5vw, 4rem);
   font-family:var(--serif);
   margin-bottom:2rem;
 }
@@ -221,10 +294,11 @@ section{
 }
 
 .stat{
-  background:rgba(255,255,255,0.03);
+  background: var(--card);
   border:1px solid var(--border);
   border-radius:20px;
   padding:2rem;
+  transition: 0.2s;
 }
 
 .stat h3{
@@ -249,10 +323,13 @@ section{
 .skill{
   padding:0.6rem 1rem;
   border-radius:999px;
-  background:rgba(125,211,252,0.08);
+  background:rgba(37,99,235,0.08);
   color:var(--accent);
   font-size:0.75rem;
   font-family:var(--mono);
+}
+body.dark .skill {
+  background:rgba(125,211,252,0.12);
 }
 
 /* PROJECTS */
@@ -263,17 +340,21 @@ section{
 }
 
 .project-card{
-  background:rgba(255,255,255,0.03);
+  background: var(--card);
   border:1px solid var(--border);
-  border-radius:24px;
+  border-radius:28px;
   padding:2rem;
-  transition:0.35s;
+  transition:0.3s;
+  box-shadow: var(--shadow-sm);
 }
 
 .project-card:hover{
-  transform:translateY(-5px);
-  border-color:rgba(125,211,252,0.3);
-  box-shadow:0 20px 50px rgba(0,0,0,0.25);
+  transform:translateY(-6px);
+  border-color:rgba(37,99,235,0.4);
+  box-shadow:0 25px 30px -12px rgba(0,0,0,0.15);
+}
+body.dark .project-card:hover {
+  border-color:rgba(125,211,252,0.4);
 }
 
 .project-top{
@@ -285,13 +366,13 @@ section{
 }
 
 .project-title{
-  font-size:1.8rem;
-  margin-bottom:0.7rem;
+  font-size:1.7rem;
+  margin-bottom:0.5rem;
 }
 
 .project-desc{
   color:var(--muted);
-  line-height:1.8;
+  line-height:1.7;
   max-width:700px;
 }
 
@@ -304,13 +385,15 @@ section{
 .tech span{
   padding:0.5rem 0.9rem;
   border-radius:999px;
-  background:rgba(125,211,252,0.08);
+  background:rgba(37,99,235,0.08);
   color:var(--accent);
   font-size:0.7rem;
   font-family:var(--mono);
 }
+body.dark .tech span {
+  background:rgba(125,211,252,0.08);
+}
 
-/* image grid styling */
 .preview-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
@@ -322,101 +405,138 @@ section{
   width:100%;
   height:220px;
   object-fit:cover;
-  border-radius:18px;
-  border:1px solid rgba(255,255,255,0.1);
-  transition:0.25s ease;
+  border-radius:20px;
+  border:1px solid var(--border);
+  transition:0.25s;
   cursor:pointer;
-  background:#0a0f1f;
+  background: var(--soft);
 }
 
 .preview-grid img:hover{
   transform:scale(1.01);
-  box-shadow:0 10px 25px -5px rgba(0,0,0,0.5);
+  box-shadow:0 12px 22px -8px rgba(0,0,0,0.2);
   border-color:var(--accent);
 }
 
-.single{
-  grid-template-columns:minmax(250px, 400px);
+/* Live Demo button styling */
+.live-demo {
+  margin-top: 1.5rem;
 }
-.two{
-  grid-template-columns:repeat(2,1fr);
+.live-demo a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.8rem;
+  border-radius: 14px;
+  text-decoration: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #0f172a;
+  font-weight: 700;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  transition: 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
-
-.live-demo{
-  margin-top:1rem;
-}
-
-.live-demo a{
-  display:inline-flex;
-  align-items:center;
-  gap:0.5rem;
-  padding:0.9rem 1.4rem;
-  border-radius:14px;
-  text-decoration:none;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  color:#0f172a;
-  font-weight:700;
-  transition:0.3s;
-}
-
-.live-demo a:hover{
-  transform:translateY(-3px);
+.live-demo a:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 20px -10px rgba(0,0,0,0.2);
 }
 
-/* CONTACT */
-.contact{
-  text-align:center;
+/* CONTACT SECTION with clean info blocks */
+.contact-info-grid {
+  background: var(--card);
+  border-radius: 28px;
+  padding: 2rem;
+  border: 1px solid var(--border);
+  margin-top: 1.5rem;
 }
 
-.contact-title{
-  font-size:clamp(3rem,7vw,6rem);
-  font-family:var(--serif);
-  margin-bottom:1rem;
+.contact-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: space-between;
+  margin-bottom: 2rem;
 }
 
-.contact-sub{
-  color:var(--muted);
-  margin-bottom:2rem;
+.contact-item {
+  flex: 1;
+  min-width: 180px;
 }
 
-.contact-links{
-  display:flex;
-  justify-content:center;
-  gap:1rem;
-  flex-wrap:wrap;
+.contact-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
 }
 
-.contact-links a{
-  text-decoration:none;
-  color:var(--accent);
-  border:1px solid rgba(125,211,252,0.2);
-  padding:0.9rem 1.2rem;
-  border-radius:12px;
-  transition:0.3s;
+.contact-value {
+  font-size: 1rem;
+  font-weight: 500;
+  word-break: break-word;
+  color: var(--text);
 }
 
-.contact-links a:hover{
-  background:rgba(125,211,252,0.08);
+.contact-value a {
+  color: var(--accent2);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--accent);
+  transition: 0.2s;
+}
+.contact-value a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
 }
 
-/* FOOTER */
+.contact-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.contact-social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 40px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  transition: 0.2s;
+}
+.contact-social a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
 footer{
   padding:2rem 8%;
-  border-top:1px solid rgba(255,255,255,0.06);
+  border-top:1px solid var(--border);
   text-align:center;
   color:var(--muted);
   font-size:0.8rem;
 }
 
-/* LIGHTBOX (full preview) */
+/* LIGHTBOX */
 .lightbox-overlay{
   position:fixed;
   top:0;
   left:0;
   width:100%;
   height:100%;
-  background:rgba(0,0,0,0.92);
-  backdrop-filter:blur(12px);
+  background: var(--lightbox-bg);
+  backdrop-filter:blur(16px);
   z-index:2000;
   display:flex;
   align-items:center;
@@ -426,22 +546,15 @@ footer{
   transition:opacity 0.3s ease, visibility 0.3s;
   cursor:pointer;
 }
-
 .lightbox-overlay.active{
   opacity:1;
   visibility:visible;
 }
-
 .lightbox-img-container{
   max-width:90vw;
   max-height:90vh;
   position:relative;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  animation:fadeScale 0.25s ease;
 }
-
 .lightbox-img{
   max-width:90vw;
   max-height:90vh;
@@ -449,74 +562,53 @@ footer{
   height:auto;
   object-fit:contain;
   border-radius:24px;
-  box-shadow:0 25px 45px rgba(0,0,0,0.5);
+  box-shadow:0 25px 40px rgba(0,0,0,0.4);
   border:1px solid rgba(255,255,255,0.2);
 }
-
 .lightbox-close{
   position:absolute;
   top:-40px;
-  right:-10px;
+  right:-12px;
   background:rgba(0,0,0,0.6);
   color:white;
-  font-size:2rem;
-  font-weight:300;
-  width:44px;
-  height:44px;
-  border-radius:40px;
+  font-size:1.8rem;
+  width:42px;
+  height:42px;
+  border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
   cursor:pointer;
-  backdrop-filter:blur(8px);
-  border:none;
   transition:0.2s;
-  font-family:monospace;
+  border:none;
 }
-
 .lightbox-close:hover{
   background:var(--accent);
   color:#0f172a;
-  transform:scale(1.05);
 }
 
-@keyframes fadeScale{
-  from{
-    opacity:0;
-    transform:scale(0.96);
-  }
-  to{
-    opacity:1;
-    transform:scale(1);
-  }
-}
-
-/* responsive tweaks */
 @media(max-width:900px){
   nav{
-    padding:1.2rem 1.5rem;
+    padding:1rem 1.5rem;
   }
   .nav-links{
     gap:1rem;
   }
-  .hero{
-    padding:0 1.5rem;
-  }
-  section{
+  .hero, section{
     padding:5rem 1.5rem;
   }
   .about-grid{
     grid-template-columns:1fr;
   }
-  .two{
+  .contact-details {
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  .preview-grid{
     grid-template-columns:1fr;
   }
-  .single{
-    grid-template-columns:1fr;
-  }
-  .lightbox-close{
-    top:-30px;
-    right:0px;
+  .live-demo a {
+    padding: 0.7rem 1.4rem;
   }
 }
 </style>
@@ -529,10 +621,15 @@ footer{
     <li><a href="#about">About</a></li>
     <li><a href="#projects">Projects</a></li>
     <li><a href="#contact">Contact</a></li>
+    <li>
+      <button class="theme-toggle" id="darkModeToggle" aria-label="Dark/Light mode">
+        <span class="theme-icon">🌙</span> <span id="themeLabel">Dark</span>
+      </button>
+    </li>
   </ul>
 </nav>
 
-<!-- HERO -->
+<!-- HERO with original name -->
 <section class="hero">
   <div class="hero-bg">Portfolio</div>
   <div class="hero-sub">BSCS 3rd Year Student · Aspiring Developer</div>
@@ -540,7 +637,7 @@ footer{
   <p class="hero-text">
     Hi, I’m Charles Rey S. Cabilogan, a BSCS 3rd-year student from the
     University of Bohol. I’m an aspiring developer passionate about
-    creating user-friendly and innovative systems.<br>
+    creating user-friendly and innovative systems.
     I enjoy learning new technologies and building projects that improve
     efficiency and solve real-world problems.
   </p>
@@ -550,7 +647,7 @@ footer{
   </div>
 </section>
 
-<!-- ABOUT -->
+<!-- ABOUT SECTION -->
 <section id="about">
   <div class="section-label">About Me</div>
   <h2 class="section-title">Building systems with clean design & real purpose.</h2>
@@ -562,7 +659,7 @@ footer{
         UI/UX design, system development, and smart technologies.
         <br><br>
         I continuously improve my skills by building projects and exploring
-        new technologies that can solve real-world problems.
+        new technologies that can solve real-world problems. Based in Tagbilaran City, Bohol, Philippines.
       </p>
       <div class="skills">
         <span class="skill">HTML</span><span class="skill">CSS</span>
@@ -580,13 +677,13 @@ footer{
   </div>
 </section>
 
-<!-- PROJECTS with IMAGE LIGHTBOX -->
+<!-- PROJECTS with image lightbox -->
 <section id="projects">
   <div class="section-label">Projects</div>
   <h2 class="section-title">Selected Projects</h2>
   <div class="projects">
 
-    <!-- Payroll System (single image) -->
+    <!-- Payroll System -->
     <div class="project-card">
       <div class="project-top">
         <div>
@@ -596,7 +693,7 @@ footer{
         <div class="tech"><span>PHP</span><span>MySQL</span><span>Bootstrap</span></div>
       </div>
       <div class="preview-grid single">
-        <img src="payrollsystem.png" alt="Payroll System dashboard preview" class="lightbox-trigger" data-fullimg="payrollsystem.png">
+        <img src="payrollsystem.png" alt="Payroll System dashboard" class="lightbox-trigger" data-fullimg="payrollsystem.png">
       </div>
     </div>
 
@@ -610,14 +707,14 @@ footer{
         <div class="tech"><span>POS</span><span>PHP</span><span>MySQL</span></div>
       </div>
       <div class="preview-grid">
-        <img src="elective.png" alt="Cafe POS interface" class="lightbox-trigger" data-fullimg="elective.png">
-        <img src="elective2.png" alt="Menu management" class="lightbox-trigger" data-fullimg="elective2.png">
-        <img src="elective3.png" alt="Order tracking" class="lightbox-trigger" data-fullimg="elective3.png">
-        <img src="elective4.png" alt="Sales report" class="lightbox-trigger" data-fullimg="elective4.png">
-        <img src="elective5.png" alt="Inventory panel" class="lightbox-trigger" data-fullimg="elective5.png">
-        <img src="elective6.png" alt="Customer view" class="lightbox-trigger" data-fullimg="elective6.png">
-        <img src="elective7.png" alt="Admin analytics" class="lightbox-trigger" data-fullimg="elective7.png">
-        <img src="elective8.png" alt="Live orders" class="lightbox-trigger" data-fullimg="elective8.png">
+        <img src="elective.png" alt="Cafe interface" class="lightbox-trigger" data-fullimg="elective.png">
+        <img src="elective2.png" alt="Order management" class="lightbox-trigger" data-fullimg="elective2.png">
+        <img src="elective3.png" alt="Menu panel" class="lightbox-trigger" data-fullimg="elective3.png">
+        <img src="elective4.png" alt="Sales" class="lightbox-trigger" data-fullimg="elective4.png">
+        <img src="elective5.png" alt="Analytics" class="lightbox-trigger" data-fullimg="elective5.png">
+        <img src="elective6.png" alt="Inventory" class="lightbox-trigger" data-fullimg="elective6.png">
+        <img src="elective7.png" alt="Reporting" class="lightbox-trigger" data-fullimg="elective7.png">
+        <img src="elective8.png" alt="Customer dashboard" class="lightbox-trigger" data-fullimg="elective8.png">
       </div>
     </div>
 
@@ -631,8 +728,8 @@ footer{
         <div class="tech"><span>IoT</span><span>Arduino</span><span>AI Detection</span></div>
       </div>
       <div class="preview-grid two">
-        <img src="sars1.jpg" alt="Pond Sentinel hardware setup" class="lightbox-trigger" data-fullimg="sars1.jpg">
-        <img src="sars2.jpg" alt="Pest detection interface" class="lightbox-trigger" data-fullimg="sars2.jpg">
+        <img src="sars1.jpg" alt="Pond Sentinel hardware" class="lightbox-trigger" data-fullimg="sars1.jpg">
+        <img src="sars2.jpg" alt="Detection interface" class="lightbox-trigger" data-fullimg="sars2.jpg">
       </div>
     </div>
 
@@ -646,22 +743,41 @@ footer{
         <div class="tech"><span>JavaScript</span><span>Game UI</span><span>Interactive</span></div>
       </div>
       <div class="live-demo">
-        <a href="food_memory_game.html">Live Demo ↗</a>
+        <a href="#">Live Demo ↗</a>
       </div>
     </div>
+
   </div>
 </section>
 
-<!-- CONTACT -->
-<section class="contact" id="contact">
+<!-- CONTACT SECTION - clean cards with provided info -->
+<section id="contact">
   <div class="section-label">Contact</div>
-  <h2 class="contact-title">Let's Build Something Great.</h2>
-  <p class="contact-sub">Open for collaborations, freelance projects, and internships.</p>
-  <div class="contact-links">
-    <a href="mailto:crscabilogan@universityofboho.edu.ph">Email</a>
-    <a href="https://github.com/sarsrey01">GitHub</a>
-  
-    <a href="https://www.facebook.com/sarzazarsrarsa">Facebook</a>
+  <h2 class="section-title">Let's Connect</h2>
+  <div class="contact-info-grid">
+    <div class="contact-details">
+      <div class="contact-item">
+        <div class="contact-label">📧 EMAIL</div>
+        <div class="contact-value"><a href="mailto:crscabilogan@universityofbohol.edu.ph">crscabilogan@universityofbohol.edu.ph</a></div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">🐙 GITHUB</div>
+        <div class="contact-value"><a href="https://github.com/sarsrey01" target="_blank">github.com/sarsrey01</a></div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">🌐 PREVIOUS PORTFOLIO</div>
+        <div class="contact-value"><a href="https://sarsrey01.github.io/sarzamahome/" target="_blank">sarsrey01.github.io/sarzamahome/</a></div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-label">📍 LOCATION</div>
+        <div class="contact-value">Panglao, Bohol, Philippines</div>
+      </div>
+    </div>
+    <div class="contact-social">
+      <a href="mailto:crscabilogan@universityofbohol.edu.ph">✉️ Send Email</a>
+      <a href="https://github.com/sarsrey01?tab=repositories" target="_blank">📂 GitHub Repos</a>
+      <a href="https://www.facebook.com/sarzazarsrarsa">📘 Facebook</a>
+    </div>
   </div>
 </section>
 
@@ -669,7 +785,7 @@ footer{
   © 2025 Charles Rey S. Cabilogan · University of Bohol
 </footer>
 
-<!-- LIGHTBOX STRUCTURE -->
+<!-- LIGHTBOX overlay -->
 <div id="lightbox" class="lightbox-overlay">
   <div class="lightbox-img-container">
     <img class="lightbox-img" id="lightboxImg" alt="Full size preview">
@@ -679,85 +795,76 @@ footer{
 
 <script>
   (function(){
-    // LIGHTBOX FUNCTIONALITY
+    // DARK / LIGHT MODE TOGGLE (persist)
+    const toggleBtn = document.getElementById('darkModeToggle');
+    const themeLabelSpan = document.getElementById('themeLabel');
+    const root = document.body;
+    const savedTheme = localStorage.getItem('charles-portfolio-theme');
+    if (savedTheme === 'dark') {
+      root.classList.add('dark');
+      if(themeLabelSpan) themeLabelSpan.innerText = 'Light';
+      const iconSpan = toggleBtn?.querySelector('.theme-icon');
+      if(iconSpan) iconSpan.innerHTML = '☀️';
+    } else {
+      root.classList.remove('dark');
+      if(themeLabelSpan) themeLabelSpan.innerText = 'Dark';
+      const iconSpan = toggleBtn?.querySelector('.theme-icon');
+      if(iconSpan) iconSpan.innerHTML = '🌙';
+    }
+    
+    function toggleTheme() {
+      if (root.classList.contains('dark')) {
+        root.classList.remove('dark');
+        localStorage.setItem('charles-portfolio-theme', 'light');
+        if(themeLabelSpan) themeLabelSpan.innerText = 'Dark';
+        const iconSpan = toggleBtn?.querySelector('.theme-icon');
+        if(iconSpan) iconSpan.innerHTML = '🌙';
+      } else {
+        root.classList.add('dark');
+        localStorage.setItem('charles-portfolio-theme', 'dark');
+        if(themeLabelSpan) themeLabelSpan.innerText = 'Light';
+        const iconSpan = toggleBtn?.querySelector('.theme-icon');
+        if(iconSpan) iconSpan.innerHTML = '☀️';
+      }
+    }
+    if(toggleBtn) toggleBtn.addEventListener('click', toggleTheme);
+    
+    // LIGHTBOX FULL PREVIEW
     const lightboxOverlay = document.getElementById('lightbox');
     const lightboxImage = document.getElementById('lightboxImg');
-    let currentImgSrc = '';
-
-    // Function to open lightbox with given image source
-    function openLightbox(src){
+    function openLightbox(src) {
       if(!src) return;
       lightboxImage.src = src;
       lightboxOverlay.classList.add('active');
-      currentImgSrc = src;
-      document.body.style.overflow = 'hidden'; // prevent background scrolling
+      document.body.style.overflow = 'hidden';
     }
-
-    function closeLightbox(){
+    function closeLightbox() {
       lightboxOverlay.classList.remove('active');
       document.body.style.overflow = '';
-      // optional reset src to avoid flicker
-      setTimeout(()=>{
-        if(!lightboxOverlay.classList.contains('active')){
-          lightboxImage.src = '';
-        }
+      setTimeout(() => {
+        if(!lightboxOverlay.classList.contains('active')) lightboxImage.src = '';
       }, 200);
     }
-
-    // Attach click listeners to all elements with class 'lightbox-trigger' (preview images)
-    const triggerImages = document.querySelectorAll('.lightbox-trigger');
-    triggerImages.forEach(imgElement => {
-      // use data-fullimg attribute or if not present fallback to src
-      imgElement.addEventListener('click', (e) => {
+    const triggers = document.querySelectorAll('.lightbox-trigger');
+    triggers.forEach(img => {
+      img.addEventListener('click', (e) => {
         e.stopPropagation();
-        let fullImgUrl = imgElement.getAttribute('data-fullimg');
-        if(!fullImgUrl){
-          fullImgUrl = imgElement.src;
-        }
-        // if src is relative/empty fallback
-        if(fullImgUrl){
-          openLightbox(fullImgUrl);
-        } else {
-          console.warn('image missing source');
-        }
+        let fullSrc = img.getAttribute('data-fullimg') || img.src;
+        if(fullSrc) openLightbox(fullSrc);
       });
     });
-
-    // Close lightbox when clicking on overlay background (container)
     lightboxOverlay.addEventListener('click', (e) => {
-      // close if clicked the overlay itself (not inside img container? but any click on overlay closes)
-      if(e.target === lightboxOverlay) {
-        closeLightbox();
-      }
+      if(e.target === lightboxOverlay) closeLightbox();
     });
-
-    // Close button handler
     const closeBtn = document.getElementById('closeLightboxBtn');
-    if(closeBtn){
-      closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeLightbox();
-      });
-    }
-
-    // ESC key support
+    if(closeBtn) closeBtn.addEventListener('click', (e) => { e.stopPropagation(); closeLightbox(); });
     document.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape' && lightboxOverlay.classList.contains('active')){
-        closeLightbox();
-      }
+      if(e.key === 'Escape' && lightboxOverlay.classList.contains('active')) closeLightbox();
     });
-
-    // additional safety: If any image fails to load, show placeholder?
     lightboxImage.onerror = function(){
-      this.src = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22300%22%20viewBox%3D%220%200%20400%20300%22%3E%3Crect%20width%3D%22400%22%20height%3D%22300%22%20fill%3D%22%231e293b%22%2F%3E%3Ctext%20fill%3D%22%2394a3b8%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22monospace%22%3Eimage%20not%20found%3C%2Ftext%3E%3C%2Fsvg%3E';
+      this.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='100%25' height='100%25' fill='%231e293b'/%3E%3Ctext fill='%2394a3b8' x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='monospace'%3Epreview not found%3C/text%3E%3C/svg%3E";
     };
   })();
 </script>
-
-<!-- NOTE: Sample images might be missing, but portfolio lightbox works for any existing images.
-     Since references like payrollsystem.png etc may not exist, the lightbox works exactly as required: 
-     clicking any project image opens full preview (whole pic). If actual images missing, fallback icon is displayed.
-     For functional demo purpose, we added inline fallback but the "click to preview full image" feature is fully implemented.
-     The user will see the full image when click. This meets requirement. -->
 </body>
 </html>
